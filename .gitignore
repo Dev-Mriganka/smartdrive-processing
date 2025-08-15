@@ -69,3 +69,4 @@ replay_pid*
 # OS junk
 .DS_Store
 Thumbs.db
+.env.aws
