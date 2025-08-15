@@ -1,0 +1,47 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: processing-service
+
+  cloud:
+    aws:
+      sqs:
+        endpoint: ${AWS_ENDPOINT:http://localhost:4566}
+      region:
+        static: us-east-1
+
+app:
+  ai-service:
+    url: ${AI_SERVICE_URL:http://localhost:8082}
+  metadata-service:
+    url: ${METADATA_SERVICE_URL:http://localhost:8085}
+
+sqs:
+  queue:
+    name: smartdrive-processing-queue
+    url: ${SQS_QUEUE_URL:http://localhost:4566/000000000000/smartdrive-processing-queue}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.smartdrive.processingservice: INFO
+    org.springframework.cloud.aws: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method

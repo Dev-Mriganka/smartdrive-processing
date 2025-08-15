@@ -1,0 +1,29 @@
+# VCS and IDE
+.git
+.gitignore
+.idea
+.vscode
+*.iml
+
+# Build artifacts and caches
+build/
+.gradle/
+out/
+
+# Logs and temp files
+logs/
+*.log
+*.tmp
+
+# Documentation
+README.md
+HELP.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local environment files
+.env
+*.local
+*.override

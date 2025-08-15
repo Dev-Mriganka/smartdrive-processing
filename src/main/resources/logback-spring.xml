@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+    <!-- Application name from Spring Boot properties -->
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="processing-service"/>
+    <property name="ENV" value="${ENV:-local}"/>
+
+    <!-- Human-readable console appender for local/dev -->
+    <appender name="CONSOLE_PRETTY" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - [traceId=%X{traceId:-}-spanId=%X{spanId:-}] %msg%n%ex{short}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- JSON console appender for shipping to collectors/log stores -->
+    <appender name="CONSOLE_JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+                <logLevel/>
+                <loggerName/>
+                <threadName/>
+                <!-- Include all MDC entries (traceId, spanId, etc.) from Micrometer/Otel -->
+                <mdc/>
+                <!-- Preserve message as JSON field, escaping newlines -->
+                <message/>
+                <stackTrace>
+                    <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                        <maxDepthPerThrowable>30</maxDepthPerThrowable>
+                        <maxLength>2048</maxLength>
+                        <shortenedClassNameLength>20</shortenedClassNameLength>
+                        <rootCauseFirst>true</rootCauseFirst>
+                    </throwableConverter>
+                </stackTrace>
+            </providers>
+            <!-- Add global custom fields here -->
+            <customFields>{"service":"${APP_NAME}","env":"${ENV}","service.namespace":"smartdrive"}</customFields>
+        </encoder>
+    </appender>
+
+    <!-- Use JSON for all environments -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE_JSON"/>
+    </root>
+
+</configuration>
